@@ -1,5 +1,6 @@
 import streamlit as st
 from abc import ABC, abstractmethod
+import pydeck as pdk
 
 # ================== DATA ==================
 
@@ -12,183 +13,126 @@ routes = {
 }
 
 city_info = {
-    "София": {
-        "hotel": ("Hotel Sofia Center", 70),
-        "food": ("Традиционна българска кухня", 20),
-        "sight": "Катедралата Александър Невски"
-    },
-    "Белград": {
-        "hotel": ("Belgrade Inn", 65),
-        "food": ("Сръбска скара", 22),
-        "sight": "Калемегдан"
-    },
-    "Виена": {
-        "hotel": ("Vienna City Hotel", 90),
-        "food": ("Виенски шницел", 30),
-        "sight": "Дворецът Шьонбрун"
-    },
-    "Мюнхен": {
-        "hotel": ("Munich Central Hotel", 95),
-        "food": ("Немска кухня", 28),
-        "sight": "Мариенплац"
-    },
-    "Скопие": {
-        "hotel": ("Skopje City Hotel", 60),
-        "food": ("Македонска кухня", 18),
-        "sight": "Каменният мост"
-    },
-    "Рим": {
-        "hotel": ("Rome Center Hotel", 100),
-        "food": ("Италианска паста", 35),
-        "sight": "Колизеумът"
-    },
-    "Флоренция": {
-        "hotel": ("Florence Art Hotel", 95),
-        "food": ("Тосканска кухня", 32),
-        "sight": "Катедралата Санта Мария дел Фиоре"
-    },
-    "Будапеща": {
-        "hotel": ("Budapest Danube Hotel", 85),
-        "food": ("Унгарски гулаш", 25),
-        "sight": "Парламентът"
-    },
-    "Париж": {
-        "hotel": ("Paris Central Hotel", 110),
-        "food": ("Френска кухня", 40),
-        "sight": "Айфеловата кула"
-    },
-    "Милано": {
-        "hotel": ("Milano Fashion Hotel", 105),
-        "food": ("Италианска кухня", 34),
-        "sight": "Катедралата Дуомо"
-    },
-    "Барселона": {
-        "hotel": ("Barcelona Beach Hotel", 100),
-        "food": ("Испански тапас", 30),
-        "sight": "Саграда Фамилия"
-    }
+    "София": {"hotel": ("Hotel Sofia Center", 70), "food": ("Българска кухня", 20), "sight": "Александър Невски"},
+    "Белград": {"hotel": ("Belgrade Inn", 65), "food": ("Сръбска скара", 22), "sight": "Калемегдан"},
+    "Виена": {"hotel": ("Vienna City Hotel", 90), "food": ("Виенски шницел", 30), "sight": "Шьонбрун"},
+    "Мюнхен": {"hotel": ("Munich Central Hotel", 95), "food": ("Немска кухня", 28), "sight": "Мариенплац"},
+    "Скопие": {"hotel": ("Skopje City Hotel", 60), "food": ("Македонска кухня", 18), "sight": "Каменният мост"},
+    "Рим": {"hotel": ("Rome Center Hotel", 100), "food": ("Паста", 35), "sight": "Колизеум"},
+    "Флоренция": {"hotel": ("Florence Art Hotel", 95), "food": ("Тосканска кухня", 32), "sight": "Катедралата"},
+    "Будапеща": {"hotel": ("Budapest Danube Hotel", 85), "food": ("Гулаш", 25), "sight": "Парламентът"},
+    "Париж": {"hotel": ("Paris Central Hotel", 110), "food": ("Френска кухня", 40), "sight": "Айфеловата кула"},
+    "Милано": {"hotel": ("Milano Fashion Hotel", 105), "food": ("Италианска кухня", 34), "sight": "Дуомо"},
+    "Барселона": {"hotel": ("Barcelona Beach Hotel", 100), "food": ("Тапас", 30), "sight": "Саграда Фамилия"}
 }
 
-DISTANCE_BETWEEN_CITIES = 300  # км (опростено)
+# Координати на градовете
+city_coords = {
+    "София": [23.3219, 42.6977],
+    "Белград": [20.4489, 44.7866],
+    "Виена": [16.3738, 48.2082],
+    "Мюнхен": [11.5820, 48.1351],
+    "Скопие": [21.4254, 41.9981],
+    "Рим": [12.4964, 41.9028],
+    "Флоренция": [11.2558, 43.7696],
+    "Будапеща": [19.0402, 47.4979],
+    "Париж": [2.3522, 48.8566],
+    "Милано": [9.1900, 45.4642],
+    "Барселона": [2.1734, 41.3851]
+}
+
+DISTANCE_BETWEEN_CITIES = 300
 
 # ================== OOP ==================
 
 class Transport(ABC):
-    def __init__(self, price_per_km):
+    def __init__(self, price_per_km, icon):
         self.price_per_km = price_per_km
-
-    @abstractmethod
-    def name(self):
-        pass
+        self.icon = icon
 
     def travel_cost(self, distance):
         return distance * self.price_per_km
 
-
 class Car(Transport):
     def __init__(self):
-        super().__init__(0.25)
-
-    def name(self):
-        return "🚗 Кола"
-
+        super().__init__(0.25, "🚗")
 
 class Train(Transport):
     def __init__(self):
-        super().__init__(0.18)
-
-    def name(self):
-        return "🚆 Влак"
-
+        super().__init__(0.18, "🚆")
 
 class Plane(Transport):
     def __init__(self):
-        super().__init__(0.45)
-
-    def name(self):
-        return "✈️ Самолет"
+        super().__init__(0.45, "✈️")
 
 # ================== UI ==================
 
 st.title("🌍 Интерактивен туристически планер")
 
-route_choice = st.selectbox(
-    "Избери маршрут:",
-    list(routes.keys())
-)
+route_choice = st.selectbox("Избери маршрут:", list(routes.keys()))
+transport_choice = st.selectbox("Превозно средство:", ["Кола", "Влак", "Самолет"])
+hotel_stars = st.selectbox("Категория хотел:", ["⭐", "⭐⭐", "⭐⭐⭐"])
 
-transport_choice = st.selectbox(
-    "Превозно средство:",
-    ["Кола", "Влак", "Самолет"]
-)
+days = st.slider("Брой дни:", 1, 10, 4)
+budget = st.number_input("Бюджет (лв):", 300, 5000, 1500)
 
-hotel_stars = st.selectbox(
-    "Категория хотел:",
-    ["⭐ Бюджетен", "⭐⭐ Стандартен", "⭐⭐⭐ Луксозен"]
-)
-
-days = st.slider("Брой дни за пътуването:", 1, 10, 4)
-budget = st.number_input("Твоят бюджет (лв):", 300, 5000, 1500)
-
-hotel_multiplier = {
-    "⭐ Бюджетен": 0.8,
-    "⭐⭐ Стандартен": 1.0,
-    "⭐⭐⭐ Луксозен": 1.4
-}
+hotel_multiplier = {"⭐": 0.8, "⭐⭐": 1.0, "⭐⭐⭐": 1.4}
 
 if st.button("Планирай пътуването 🧭"):
     cities = routes[route_choice]
 
-    # Избор на транспорт (полиморфизъм)
-    if transport_choice == "Кола":
-        transport = Car()
-    elif transport_choice == "Влак":
-        transport = Train()
-    else:
-        transport = Plane()
+    transport = Car() if transport_choice == "Кола" else Train() if transport_choice == "Влак" else Plane()
 
-    st.subheader("🗺️ Маршрут")
-    st.write(" ➡️ ".join(cities))
+    # ================== MAP ==================
+    st.subheader("🗺️ Карта на маршрута")
 
-    # ================== CITY DETAILS ==================
-    st.subheader("🏙️ Спирки и предложения")
+    path = [city_coords[city] for city in cities]
 
-    total_food_cost = 0
-    total_hotel_cost = 0
+    layer = pdk.Layer(
+        "PathLayer",
+        data=[{"path": path, "name": transport.icon}],
+        get_path="path",
+        get_color=[255, 0, 0],
+        width_scale=20,
+        width_min_pixels=4,
+        pickable=True
+    )
+
+    view_state = pdk.ViewState(
+        longitude=path[0][0],
+        latitude=path[0][1],
+        zoom=4,
+        pitch=0
+    )
+
+    st.pydeck_chart(pdk.Deck(
+        layers=[layer],
+        initial_view_state=view_state,
+        tooltip={"text": f"Превоз: {transport.icon}"}
+    ))
+
+    # ================== COST ==================
+    total_food = 0
+    total_hotel = 0
 
     for city in cities:
         info = city_info[city]
+        total_food += info["food"][1] * days
+        total_hotel += info["hotel"][1] * hotel_multiplier[hotel_stars] * days
 
-        hotel_price = info['hotel'][1] * hotel_multiplier[hotel_stars]
-
-        st.markdown(f"### 📍 {city}")
-        st.write(
-            f"🏨 **Хотел ({hotel_stars}):** {info['hotel'][0]} – {hotel_price:.2f} лв/нощ"
-        )
-        st.write(f"🍽️ **Храна:** {info['food'][0]} – {info['food'][1]} лв/ден")
-        st.write(f"🏛️ **Забележителност:** {info['sight']}")
-
-        total_food_cost += info['food'][1] * days
-        total_hotel_cost += hotel_price * days
-
-    # ================== COST CALCULATION ==================
     total_distance = DISTANCE_BETWEEN_CITIES * (len(cities) - 1)
     transport_cost = transport.travel_cost(total_distance)
 
-    total_cost = transport_cost + total_food_cost + total_hotel_cost
+    total_cost = total_food + total_hotel + transport_cost
 
-    # ================== RESULTS ==================
     st.subheader("💰 Разходи")
-
-    st.write(f"{transport.name()} – транспорт: {transport_cost:.2f} лв")
-    st.write(f"🍽️ Храна: {total_food_cost:.2f} лв")
-    st.write(f"🏨 Хотели: {total_hotel_cost:.2f} лв")
-
-    st.markdown("---")
-    st.write(f"## 💵 Общ бюджет: **{total_cost:.2f} лв**")
+    st.write(f"{transport.icon} Транспорт: {transport_cost:.2f} лв")
+    st.write(f"🍽️ Храна: {total_food:.2f} лв")
+    st.write(f"🏨 Хотели: {total_hotel:.2f} лв")
+    st.write(f"## Общо: {total_cost:.2f} лв")
 
     if total_cost <= budget:
-        st.success("✅ Бюджетът е достатъчен! Приятно пътуване ✨")
+        st.success("✅ Бюджетът стига!")
     else:
-        st.error("❌ Бюджетът не достига. Помисли за по-евтин транспорт, хотел или по-малко дни.")
+        st.error("❌ Бюджетът не стига.")
 
