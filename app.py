@@ -6,19 +6,26 @@ import pydeck as pdk
 routes = {
     "България → Германия": ["София", "Белград", "Виена", "Мюнхен"],
     "България → Италия": ["София", "Скопие", "Рим", "Флоренция"],
-    "България → Франция": ["София", "Белград", "Будапеща", "Париж"]
+    "България → Франция": ["София", "Белград", "Будапеща", "Париж"],
+    "България → Испания": ["София", "Милано", "Барселона"],
+    "България → Австрия": ["София", "Белград", "Виена"],
+    "България → Холандия": ["София", "Белград", "Кьолн", "Амстердам"]
 }
 
 city_info = {
-    "София": {"hotel": ("Hotel Sofia Center", 70), "food": 20, "sight": "Александър Невски"},
-    "Белград": {"hotel": ("Belgrade Inn", 65), "food": 22, "sight": "Калемегдан"},
-    "Виена": {"hotel": ("Vienna City Hotel", 90), "food": 30, "sight": "Шьонбрун"},
-    "Мюнхен": {"hotel": ("Munich Central Hotel", 95), "food": 28, "sight": "Мариенплац"},
-    "Скопие": {"hotel": ("Skopje City Hotel", 60), "food": 18, "sight": "Каменният мост"},
-    "Рим": {"hotel": ("Rome Center Hotel", 100), "food": 35, "sight": "Колизеум"},
-    "Флоренция": {"hotel": ("Florence Art Hotel", 95), "food": 32, "sight": "Катедралата"},
-    "Будапеща": {"hotel": ("Budapest Hotel", 85), "food": 25, "sight": "Парламентът"},
-    "Париж": {"hotel": ("Paris Central", 110), "food": 40, "sight": "Айфеловата кула"}
+    "София": {"hotel": "Hotel Sofia Center", "price": 70, "food": 20, "sight": "Александър Невски"},
+    "Белград": {"hotel": "Belgrade Inn", "price": 65, "food": 22, "sight": "Калемегдан"},
+    "Виена": {"hotel": "Vienna City Hotel", "price": 90, "food": 30, "sight": "Шьонбрун"},
+    "Мюнхен": {"hotel": "Munich Central Hotel", "price": 95, "food": 28, "sight": "Мариенплац"},
+    "Скопие": {"hotel": "Skopje City Hotel", "price": 60, "food": 18, "sight": "Каменният мост"},
+    "Рим": {"hotel": "Rome Center Hotel", "price": 100, "food": 35, "sight": "Колизеум"},
+    "Флоренция": {"hotel": "Florence Art Hotel", "price": 95, "food": 32, "sight": "Катедралата"},
+    "Будапеща": {"hotel": "Budapest Hotel", "price": 85, "food": 25, "sight": "Парламентът"},
+    "Париж": {"hotel": "Paris Central", "price": 110, "food": 40, "sight": "Айфеловата кула"},
+    "Милано": {"hotel": "Milano Fashion Hotel", "price": 105, "food": 34, "sight": "Катедралата Дуомо"},
+    "Барселона": {"hotel": "Barcelona Beach Hotel", "price": 100, "food": 30, "sight": "Саграда Фамилия"},
+    "Кьолн": {"hotel": "Cologne Central Hotel", "price": 90, "food": 28, "sight": "Катедралата в Кьолн"},
+    "Амстердам": {"hotel": "Amsterdam Canal Hotel", "price": 95, "food": 30, "sight": "Каналите и Музея на Ван Гог"}
 }
 
 city_coords = {
@@ -30,11 +37,14 @@ city_coords = {
     "Рим": [12.4964, 41.9028],
     "Флоренция": [11.2558, 43.7696],
     "Будапеща": [19.0402, 47.4979],
-    "Париж": [2.3522, 48.8566]
+    "Париж": [2.3522, 48.8566],
+    "Милано": [9.1900, 45.4642],
+    "Барселона": [2.1734, 41.3851],
+    "Кьолн": [6.9603, 50.9413],
+    "Амстердам": [4.8952, 52.3702]
 }
 
 DISTANCE = 300
-
 hotel_multiplier = {"⭐": 0.8, "⭐⭐": 1.0, "⭐⭐⭐": 1.4}
 
 transports = {
@@ -46,7 +56,6 @@ transports = {
 # ================== SIDEBAR ==================
 
 st.sidebar.title("🧭 Настройки")
-
 route_choice = st.sidebar.selectbox("Маршрут:", list(routes.keys()))
 days = st.sidebar.slider("Брой дни:", 1, 14, 7)
 budget = st.sidebar.number_input("Бюджет (лв):", 500, 10000, 2500)
@@ -90,7 +99,7 @@ if st.button("🧭 Планирай пътуването"):
         width_min_pixels=4
     )
 
-    # ИКОНКИ НА ТРАНСПОРТА (по средата на всеки етап)
+    # Иконки на транспорта по средата на всеки етап
     transport_icons = []
     for i in range(len(path) - 1):
         mid_lon = (path[i][0] + path[i + 1][0]) / 2
@@ -109,6 +118,26 @@ if st.button("🧭 Планирай пътуването"):
         get_color=[0, 0, 0]
     )
 
+    # Кликаеми градове с имена на хотели
+    city_points = []
+    for c in cities:
+        city_points.append({
+            "position": city_coords[c],
+            "city": c,
+            "hotel": f"{city_info[c]['hotel']} ({city_hotels[c]})",
+            "food": city_info[c]["food"],
+            "sight": city_info[c]["sight"]
+        })
+
+    city_layer = pdk.Layer(
+        "ScatterplotLayer",
+        data=city_points,
+        get_position="position",
+        get_radius=50000,
+        get_fill_color=[0, 128, 255],
+        pickable=True
+    )
+
     view = pdk.ViewState(
         longitude=path[0][0],
         latitude=path[0][1],
@@ -116,21 +145,19 @@ if st.button("🧭 Планирай пътуването"):
     )
 
     st.pydeck_chart(pdk.Deck(
-        layers=[path_layer, transport_layer],
-        initial_view_state=view
+        layers=[path_layer, transport_layer, city_layer],
+        initial_view_state=view,
+        tooltip={
+            "html": "<b>{city}</b><br>Хотел: {hotel}<br>Храна: {food} лв/ден<br>Забележителност: {sight}",
+            "style": {"backgroundColor": "white", "color": "black"}
+        }
     ))
 
     # ================== COST ==================
 
     transport_cost = sum(t["price"] * DISTANCE for t in segment_transports)
-
     food_cost = sum(city_info[c]["food"] for c in cities) * days
-
-    hotel_cost = 0
-    for city in cities:
-        base_price = city_info[city]["hotel"][1]
-        hotel_cost += base_price * hotel_multiplier[city_hotels[city]] * days
-
+    hotel_cost = sum(city_info[c]["price"] * hotel_multiplier[city_hotels[c]] * days for c in cities)
     total_cost = transport_cost + food_cost + hotel_cost
 
     # ================== DETAILS ==================
@@ -142,7 +169,7 @@ if st.button("🧭 Планирай пътуването"):
         st.markdown(f"""
 ### 📍 {city}
 
-🏨 **Хотел:** {info['hotel'][0]} ({city_hotels[city]})  
+🏨 **Хотел:** {info['hotel']} ({city_hotels[city]})  
 🍽️ **Храна:** ~ {info['food']} лв / ден  
 🏛️ **Забележителност:** {info['sight']}
 """)
