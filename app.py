@@ -133,6 +133,8 @@ if days < 1:
     st.sidebar.error("Дата на напускане трябва да е след началната!")
     st.stop()
 
+budget = st.sidebar.number_input("Твоят бюджет (лв):", 0, 100000, 5000)
+
 city_hotel_choices = {}
 for city in routes[route_choice]:
     city_hotel_choices[city] = st.sidebar.selectbox(
@@ -237,6 +239,12 @@ if st.button("🎒 Създай план"):
     st.write(f"🍽️ Храна общо: {total_food:.2f} лв")
     st.write(f"🏨 Хотели общо: {total_hotel:.2f} лв")
     st.write(f"💰 Общо: {total_cost:.2f} лв")
+
+    # --- Budget check ---
+    if total_cost <= budget:
+        st.success("✅ Бюджетът е достатъчен! Приятно пътуване ✨")
+    else:
+        st.error("❌ Бюджетът не достига. Помисли за по-евтин хотел или транспорт.")
 
     st.markdown("---")
     for city in cities:
