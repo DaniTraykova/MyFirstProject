@@ -48,6 +48,15 @@ city_info = {
         "food_price": 28,
         "sight": "Мариенплац"
     },
+    "Скопие": {
+        "coords": [21.4254, 41.9981],
+        "hotels": [
+            ("Hotel Aleksandar Palace", 90, "https://www.booking.com/hotel/mk/aleksandar-palace.html"),
+            ("Skopje Marriott Hotel", 150, "https://www.booking.com/hotel/mk/marriott-skopje.html")
+        ],
+        "food_price": 18,
+        "sight": "Каменният мост"
+    },
     "Рим": {
         "coords": [12.4964, 41.9028],
         "hotels": [
@@ -66,6 +75,33 @@ city_info = {
         "food_price": 32,
         "sight": "Катедралата Санта Мария дел Фиоре"
     },
+    "Будапеща": {
+        "coords": [19.0402, 47.4979],
+        "hotels": [
+            ("Four Seasons Gresham Palace", 450, "https://www.booking.com/hotel/hu/four-seasons-gresham-palace.html"),
+            ("Budapest Marriott Hotel", 280, "https://www.booking.com/hotel/hu/marriott-budapest.html")
+        ],
+        "food_price": 25,
+        "sight": "Парламентът"
+    },
+    "Париж": {
+        "coords": [2.3522, 48.8566],
+        "hotels": [
+            ("Le Meurice", 500, "https://www.booking.com/hotel/fr/le-meurice.html"),
+            ("Hotel Regina Louvre", 350, "https://www.booking.com/hotel/fr/regina-louvre.html")
+        ],
+        "food_price": 40,
+        "sight": "Айфеловата кула"
+    },
+    "Милано": {
+        "coords": [9.1900, 45.4642],
+        "hotels": [
+            ("Milano Scala Hotel", 280, "https://www.booking.com/hotel/it/milano-scala.html"),
+            ("Room Mate Giulia", 220, "https://www.booking.com/hotel/it/room-mate-giulia.html")
+        ],
+        "food_price": 34,
+        "sight": "Катедралата Дуомо"
+    },
     "Барселона": {
         "coords": [2.1734, 41.3851],
         "hotels": [
@@ -83,17 +119,15 @@ transports = {
     "Самолет": {"price_per_km": 0.45, "icon": "✈️"}
 }
 
-DISTANCE = 300  # базово
+DISTANCE = 300  # км за опростен пример
 
 # ================== SIDEBAR ==================
 
 st.sidebar.title("🧭 Туристически планер")
 
 route_choice = st.sidebar.selectbox("Маршрут:", list(routes.keys()))
-
 checkin = st.sidebar.date_input("Начална дата (Check‑in)", datetime.today())
 checkout = st.sidebar.date_input("Крайна дата (Check‑out)", datetime.today())
-
 days = (checkout - checkin).days
 if days < 1:
     st.sidebar.error("Дата на напускане трябва да е след началната!")
@@ -133,6 +167,7 @@ if st.button("🎒 Създай план"):
         width_min_pixels=4
     )
 
+    # --- Transport icons ---
     icon_data = []
     for i in range(len(path)-1):
         mid_lon = (path[i][0] + path[i+1][0]) / 2
@@ -148,10 +183,18 @@ if st.button("🎒 Създай план"):
         get_color=[0,0,0]
     )
 
-    city_points = [
-        {"position": city_info[c]["coords"], "city": c}
-        for c in cities
-    ]
+    # --- City points ---
+    city_points = []
+    for c in cities:
+        chosen_hotel = city_hotel_choices[c]
+        hotel_data = next(h for h in city_info[c]["hotels"] if h[0]==chosen_hotel)
+        city_points.append({
+            "position": city_info[c]["coords"],
+            "city": c,
+            "hotel": f"{hotel_data[0]} (~{hotel_data[1]}лв/нощ)",
+            "food": f"{city_info[c]['food_price']} лв/ден",
+            "sight": city_info[c]["sight"]
+        })
 
     city_layer = pdk.Layer(
         "ScatterplotLayer",
@@ -170,8 +213,8 @@ if st.button("🎒 Създай план"):
             zoom=4
         ),
         tooltip={
-            "html": "<b>{city}</b>",
-            "style": {"backgroundColor": "white"}
+            "html": "<b>{city}</b><br>🏨 {hotel}<br>🍽️ {food}<br>🏛️ {sight}",
+            "style": {"backgroundColor": "white", "color": "black"}
         }
     ))
 
@@ -179,8 +222,7 @@ if st.button("🎒 Създай план"):
     total_hotel = 0
     total_food = 0
     for city in cities:
-        chosen_hotel = city_hotel_choices[city]
-        hotel_data = next(h for h in city_info[city]["hotels"] if h[0]==chosen_hotel)
+        hotel_data = next(h for h in city_info[city]["hotels"] if h[0]==city_hotel_choices[city])
         total_hotel += hotel_data[1] * days
         total_food += city_info[city]["food_price"] * days
 
@@ -198,8 +240,9 @@ if st.button("🎒 Създай план"):
 
     st.markdown("---")
     for city in cities:
-        h = next(h for h in city_info[city]["hotels"] if h[0]==city_hotel_choices[city])
+        hotel_data = next(h for h in city_info[city]["hotels"] if h[0]==city_hotel_choices[city])
         st.markdown(f"### 📍 {city}")
-        st.write(f"🏨 **{h[0]}** — ~{h[1]} лв/нощ — [Резервирай]({h[2]})")
+        st.write(f"🏨 **{hotel_data[0]}** — ~{hotel_data[1]} лв/нощ — [Резервирай]({hotel_data[2]})")
         st.write(f"🍽️ Храна: ~{city_info[city]['food_price']} лв/ден")
         st.write(f"🏛️ Забележителност: {city_info[city]['sight']}")
+
