@@ -7,45 +7,74 @@ routes = {
     "България → Германия": ["София", "Белград", "Виена", "Мюнхен"],
     "България → Италия": ["София", "Скопие", "Рим", "Флоренция"],
     "България → Франция": ["София", "Белград", "Будапеща", "Париж"],
-    "България → Испания": ["София", "Милано", "Барселона"],
-    "България → Австрия": ["София", "Белград", "Виена"],
-    "България → Холандия": ["София", "Белград", "Кьолн", "Амстердам"]
+    "България → Испания": ["София", "Милано", "Барселона"]
 }
 
 city_info = {
-    "София": {"hotel": "Hotel Sofia Center", "price": 70, "food": 20, "sight": "Александър Невски"},
-    "Белград": {"hotel": "Belgrade Inn", "price": 65, "food": 22, "sight": "Калемегдан"},
-    "Виена": {"hotel": "Vienna City Hotel", "price": 90, "food": 30, "sight": "Шьонбрун"},
-    "Мюнхен": {"hotel": "Munich Central Hotel", "price": 95, "food": 28, "sight": "Мариенплац"},
-    "Скопие": {"hotel": "Skopje City Hotel", "price": 60, "food": 18, "sight": "Каменният мост"},
-    "Рим": {"hotel": "Rome Center Hotel", "price": 100, "food": 35, "sight": "Колизеум"},
-    "Флоренция": {"hotel": "Florence Art Hotel", "price": 95, "food": 32, "sight": "Катедралата"},
-    "Будапеща": {"hotel": "Budapest Hotel", "price": 85, "food": 25, "sight": "Парламентът"},
-    "Париж": {"hotel": "Paris Central", "price": 110, "food": 40, "sight": "Айфеловата кула"},
-    "Милано": {"hotel": "Milano Fashion Hotel", "price": 105, "food": 34, "sight": "Катедралата Дуомо"},
-    "Барселона": {"hotel": "Barcelona Beach Hotel", "price": 100, "food": 30, "sight": "Саграда Фамилия"},
-    "Кьолн": {"hotel": "Cologne Central Hotel", "price": 90, "food": 28, "sight": "Катедралата в Кьолн"},
-    "Амстердам": {"hotel": "Amsterdam Canal Hotel", "price": 95, "food": 30, "sight": "Каналите и Музея на Ван Гог"}
+    "София": {
+        "coords": [23.3219, 42.6977],
+        "hotels": [
+            ("Hotel Europe Sofia", 120, "https://www.booking.com/hotel/bg/europe-bg.html"),
+            ("easyHotel Sofia", 40, "https://www.booking.com/hotel/bg/easyhotel-sofia.html")
+        ],
+        "food": "Българска кухня",
+        "sight": "Катедралата Александър Невски"
+    },
+    "Белград": {
+        "coords": [20.4489, 44.7866],
+        "hotels": [
+            ("Hotel Moskva", 130, "https://www.booking.com/hotel/rs/moskva.html"),
+            ("Square Nine Hotel", 220, "https://www.booking.com/hotel/rs/square-nine.html")
+        ],
+        "food": "Сръбска скара",
+        "sight": "Калемегдан"
+    },
+    "Виена": {
+        "coords": [16.3738, 48.2082],
+        "hotels": [
+            ("The Guesthouse Vienna", 350, "https://www.booking.com/hotel/at/the-guesthouse-vienna.html"),
+            ("Hotel Sacher Wien", 500, "https://www.booking.com/hotel/at/sacher-wien.html")
+        ],
+        "food": "Виенски шницел",
+        "sight": "Дворецът Шьонбрун"
+    },
+    "Мюнхен": {
+        "coords": [11.5820, 48.1351],
+        "hotels": [
+            ("Hotel Bayerischer Hof", 420, "https://www.booking.com/hotel/de/bayerischer-hof.html"),
+            ("Marc München", 150, "https://www.booking.com/hotel/de/marc-munchen.html")
+        ],
+        "food": "Немска кухня",
+        "sight": "Мариенплац"
+    },
+    "Рим": {
+        "coords": [12.4964, 41.9028],
+        "hotels": [
+            ("Hotel Milano Castello", 330, "https://www.booking.com/hotel/it/milano-castello.html"),
+            ("Navona Palace Luxury Inn", 280, "https://www.booking.com/hotel/it/navona-palace-luxury-inn.html")
+        ],
+        "food": "Паста",
+        "sight": "Колизеум"
+    },
+    "Флоренция": {
+        "coords": [11.2558, 43.7696],
+        "hotels": [
+            ("Hotel Davanzati", 240, "https://www.booking.com/hotel/it/davanzati.html"),
+            ("FH Grand Hotel Mediterraneo", 210, "https://www.booking.com/hotel/it/grand-hotelfh-mediterraneo.html")
+        ],
+        "food": "Тосканска кухня",
+        "sight": "Катедралата Санта Мария дел Фиоре"
+    },
+    "Барселона": {
+        "coords": [2.1734, 41.3851],
+        "hotels": [
+            ("Hotel 1898", 280, "https://www.booking.com/hotel/es/colon-1898.html"),
+            ("H10 Cubik", 260, "https://www.booking.com/hotel/es/h10-cubik.html")
+        ],
+        "food": "Испански тапас",
+        "sight": "Саграда Фамилия"
+    }
 }
-
-city_coords = {
-    "София": [23.3219, 42.6977],
-    "Белград": [20.4489, 44.7866],
-    "Виена": [16.3738, 48.2082],
-    "Мюнхен": [11.5820, 48.1351],
-    "Скопие": [21.4254, 41.9981],
-    "Рим": [12.4964, 41.9028],
-    "Флоренция": [11.2558, 43.7696],
-    "Будапеща": [19.0402, 47.4979],
-    "Париж": [2.3522, 48.8566],
-    "Милано": [9.1900, 45.4642],
-    "Барселона": [2.1734, 41.3851],
-    "Кьолн": [6.9603, 50.9413],
-    "Амстердам": [4.8952, 52.3702]
-}
-
-DISTANCE = 300
-hotel_multiplier = {"⭐": 0.8, "⭐⭐": 1.0, "⭐⭐⭐": 1.4}
 
 transports = {
     "Кола": {"price": 0.25, "icon": "🚗"},
@@ -55,138 +84,98 @@ transports = {
 
 # ================== SIDEBAR ==================
 
-st.sidebar.title("🧭 Настройки")
+st.sidebar.title("🧭 Планиране")
+
 route_choice = st.sidebar.selectbox("Маршрут:", list(routes.keys()))
 days = st.sidebar.slider("Брой дни:", 1, 14, 7)
-budget = st.sidebar.number_input("Бюджет (лв):", 500, 10000, 2500)
 
-cities = routes[route_choice]
-
-st.sidebar.markdown("### 🏨 Хотел по град")
-city_hotels = {}
-for city in cities:
-    city_hotels[city] = st.sidebar.selectbox(
-        f"{city}",
-        ["⭐", "⭐⭐", "⭐⭐⭐"],
+city_hotel_choices = {}
+for city in routes[route_choice]:
+    city_hotel_choices[city] = st.sidebar.selectbox(
+        f"Хотел в {city}:",
+        [hotel[0] for hotel in city_info[city]["hotels"]],
         key=f"hotel_{city}"
     )
 
-st.sidebar.markdown("### 🚍 Транспорт по етапи")
 segment_transports = []
-for i in range(len(cities) - 1):
+for i in range(len(routes[route_choice]) - 1):
     t = st.sidebar.selectbox(
-        f"{cities[i]} → {cities[i+1]}",
+        f"{routes[route_choice][i]} → {routes[route_choice][i+1]}:",
         list(transports.keys()),
-        key=f"transport_{i}"
+        key=f"trans_{i}"
     )
     segment_transports.append(transports[t])
 
 # ================== MAIN ==================
 
-st.title("🌍 Интерактивен туристически планер")
+st.title("🌍 Реален туристически планер")
 
-if st.button("🧭 Планирай пътуването"):
+if st.button("Планирай 🧭"):
 
-    # ================== MAP ==================
+    cities = routes[route_choice]
+    path = [city_info[c]["coords"] for c in cities]
 
-    path = [city_coords[c] for c in cities]
-
+    # === MAP ===
     path_layer = pdk.Layer(
         "PathLayer",
         data=[{"path": path}],
-        get_path="path",
         get_color=[255, 0, 0],
         width_min_pixels=4
     )
 
-    # Иконки на транспорта по средата на всеки етап
-    transport_icons = []
+    icons = []
     for i in range(len(path) - 1):
-        mid_lon = (path[i][0] + path[i + 1][0]) / 2
-        mid_lat = (path[i][1] + path[i + 1][1]) / 2
-        transport_icons.append({
-            "position": [mid_lon, mid_lat],
-            "icon": segment_transports[i]["icon"]
-        })
+        mid_lon = (path[i][0] + path[i+1][0]) / 2
+        mid_lat = (path[i][1] + path[i+1][1]) / 2
+        icons.append({"position": [mid_lon, mid_lat], "icon": segment_transports[i]["icon"]})
 
-    transport_layer = pdk.Layer(
+    text_layer = pdk.Layer(
         "TextLayer",
-        data=transport_icons,
-        get_position="position",
+        data=icons,
         get_text="icon",
+        get_position="position",
         get_size=28,
         get_color=[0, 0, 0]
     )
 
-    # Кликаеми градове с имена на хотели
-    city_points = []
-    for c in cities:
-        city_points.append({
-            "position": city_coords[c],
-            "city": c,
-            "hotel": f"{city_info[c]['hotel']} ({city_hotels[c]})",
-            "food": city_info[c]["food"],
-            "sight": city_info[c]["sight"]
-        })
+    city_points = [
+        {"position": city_info[c]["coords"], "city": c}
+        for c in cities
+    ]
 
     city_layer = pdk.Layer(
         "ScatterplotLayer",
         data=city_points,
         get_position="position",
-        get_radius=50000,
         get_fill_color=[0, 128, 255],
+        get_radius=50000,
         pickable=True
     )
 
-    view = pdk.ViewState(
-        longitude=path[0][0],
-        latitude=path[0][1],
-        zoom=4
-    )
+    view = pdk.ViewState(longitude=path[0][0], latitude=path[0][1], zoom=4)
 
     st.pydeck_chart(pdk.Deck(
-        layers=[path_layer, transport_layer, city_layer],
+        layers=[path_layer, text_layer, city_layer],
         initial_view_state=view,
-        tooltip={
-            "html": "<b>{city}</b><br>Хотел: {hotel}<br>Храна: {food} лв/ден<br>Забележителност: {sight}",
-            "style": {"backgroundColor": "white", "color": "black"}
-        }
+        tooltip={"html": "<b>{city}</b>", "style": {"backgroundColor": "white"}}
     ))
 
-    # ================== COST ==================
+    # === DETAILS ===
 
-    transport_cost = sum(t["price"] * DISTANCE for t in segment_transports)
-    food_cost = sum(city_info[c]["food"] for c in cities) * days
-    hotel_cost = sum(city_info[c]["price"] * hotel_multiplier[city_hotels[c]] * days for c in cities)
-    total_cost = transport_cost + food_cost + hotel_cost
+    st.subheader("🏨 ДЕТАЙЛИ ЗА ХОТЕЛИ И ЦЕНИ")
+    total_hotel_cost = 0
 
-    # ================== DETAILS ==================
+    for city in cities:
+        hotels = city_info[city]["hotels"]
+        chosen_name = city_hotel_choices[city]
+        chosen = next(h for h in hotels if h[0] == chosen_name)
+        price = chosen[1]
+        link = chosen[2]
+        total_hotel_cost += price * days
 
-    st.subheader("📘 Подробна информация за пътуването")
+        st.markdown(f"**{city}**")
+        st.write(f"- 🏨 Хотел: [{chosen_name}]({link}) — ~{price} лв / нощ")  # реални Booking примери
+        st.write(f"- 🍽️ Кухня: {city_info[city]['food']}")
+        st.write(f"- 🏛️ Забележителност: {city_info[city]['sight']}")
 
-    for i, city in enumerate(cities):
-        info = city_info[city]
-        st.markdown(f"""
-### 📍 {city}
-
-🏨 **Хотел:** {info['hotel']} ({city_hotels[city]})  
-🍽️ **Храна:** ~ {info['food']} лв / ден  
-🏛️ **Забележителност:** {info['sight']}
-""")
-        if i < len(segment_transports):
-            st.markdown(
-                f"➡️ **Следващ етап:** {segment_transports[i]['icon']}"
-            )
-
-    # ================== RESULT ==================
-
-    st.subheader("💰 Разходи")
-    st.write(f"🚍 Транспорт: {transport_cost:.2f} лв")
-    st.write(f"🍽️ Храна: {food_cost:.2f} лв")
-    st.write(f"🏨 Хотели: {hotel_cost:.2f} лв")
-    st.write(f"## Общо: {total_cost:.2f} лв")
-
-    if total_cost <= budget:
-        st.success("✅ Бюджетът е достатъчен! Приятно пътуване ✨")
-    else:
-        st.error("❌ Бюджетът не достига.")
+    st.success(f"Общо за хотели: {total_hotel_cost:.2f} лв")
